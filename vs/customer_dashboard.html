@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Customer Dashboard</title>
+
+<style>
+body {
+    background-color: #7a8592;
+    font-family: Arial;
+    text-align: center;
+}
+.container {
+    background-color: #303438;
+    padding: 20px;
+    width: 80%;
+    margin: auto;
+    color: white;
+}
+button {
+    padding: 10px;
+    margin: 5px;
+}
+table, th, td {
+    border: 1px solid white;
+    border-collapse: collapse;
+    padding: 8px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Customer Dashboard</h1>
+
+<button onclick="viewProducts()">View Products</button>
+<button onclick="showCart()">My Cart (<span id="cartCount">0</span>)</button>
+<button onclick="viewOrders()">My Orders</button>
+
+<div id="main"></div>
+
+</div>
+
+<script>
+
+let cart = [];
+
+function viewProducts(){
+
+    let products = JSON.parse(localStorage.getItem("products")) || [];
+
+    let html = "";
+
+    for(let i=0;i<products.length;i++){
+
+        html += `
+        <div>
+            <h3>${products[i].name}</h3>
+            <p>Price: ${products[i].price}</p>
+            <p>Stock: ${products[i].quantity}</p>
+
+            <button onclick="addToCart(${i})">Add to Cart</button>
+
+            ${products[i].quantity==0 ? `
+            <p style="color:red;">Out of Stock</p>
+            <textarea id="req${i}" placeholder="Request to admin"></textarea>
+            <button onclick="sendRequest(${i})">Send</button>
+            ` : ""}
+        </div>
+        <hr>
+        `;
+    }
+
+    document.getElementById("main").innerHTML = html;
+}
+
+
+function addToCart(i){
+
+    let products = JSON.parse(localStorage.getItem("products"));
+
+    if(products[i].quantity > 0){
+
+        cart.push(products[i]);
+
+        products[i].quantity--;
+
+        localStorage.setItem("products", JSON.stringify(products));
+
+        document.getElementById("cartCount").innerText = cart.length;
+
+        alert("Added");
+
+        viewProducts();
+
+    } else {
+        alert("Out of Stock");
+    }
+}
+
+
+function showCart(){
+
+    let html = "<table><tr><th>Name</th><th>Price</th></tr>";
+
+    for(let i=0;i<cart.length;i++){
+        html += `<tr>
+            <td>${cart[i].name}</td>
+            <td>${cart[i].price}</td>
+        </tr>`;
+    }
+
+    html += "</table>";
+    html += "<button onclick='placeOrder()'>Place Order</button>";
+
+    document.getElementById("main").innerHTML = html;
+}
+
+
+function placeOrder(){
+
+    let orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+    for(let i=0;i<cart.length;i++){
+        orders.push({
+            product: cart[i].name,
+            status: "Pending"
+        });
+    }
+
+    localStorage.setItem("orders", JSON.stringify(orders));
+
+    cart = [];
+
+    document.getElementById("cartCount").innerText = 0;
+
+    alert("Order Placed");
+}
+
+
+function viewOrders(){
+
+    let orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+    let html = "<table><tr><th>Product</th><th>Status</th></tr>";
+
+    for(let i=0;i<orders.length;i++){
+        html += `<tr>
+            <td>${orders[i].product}</td>
+            <td>${orders[i].status}</td>
+        </tr>`;
+    }
+
+    html += "</table>";
+
+    document.getElementById("main").innerHTML = html;
+}
+
+
+function sendRequest(index){
+
+    let products = JSON.parse(localStorage.getItem("products"));
+    let msg = document.getElementById("req"+index).value;
+
+    let requests = JSON.parse(localStorage.getItem("requests")) || [];
+
+    requests.push({
+        product: products[index].name,
+        message: msg
+    });
+
+    localStorage.setItem("requests", JSON.stringify(requests));
+
+    alert("Request Sent");
+}
+
+</script>
+
+</body>
+</html>

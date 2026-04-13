@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Dashboard</title>
+
+<style>
+body {
+    background-color: #7a8694;
+    font-family: Arial;
+    text-align: center;
+}
+.container {
+    background-color: #303438;
+    padding: 20px;
+    width: 80%;
+    margin: auto;
+    color: white;
+}
+input, select {
+    width: 90%;
+    padding: 10px;
+    margin: 10px;
+}
+button {
+    padding: 10px;
+    background-color: #bcb6aa;
+    border: none;
+    margin: 5px;
+    cursor: pointer;
+}
+table, th, td {
+    border: 1px solid white;
+    border-collapse: collapse;
+    padding: 8px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Admin Dashboard</h1>
+
+<button onclick="showAdd()">Add Product</button>
+<button onclick="viewAllProducts()">View Products</button>
+<button onclick="viewAllOrders()">View Orders</button>
+<button onclick="viewRequests()">View Requests</button>
+
+<div id="main"></div>
+
+</div>
+
+<script>
+
+// ✅ Add Product Form
+function showAdd(){
+    document.getElementById("main").innerHTML = `
+        <h2>Add Product</h2>
+        <input id="name" placeholder="Product Name"><br>
+        <input id="price" type="number" placeholder="Price"><br>
+        <input id="category" placeholder="Category"><br>
+        <input id="stock" type="number" placeholder="Stock"><br>
+        <button onclick="addProduct()">Add Product</button>
+    `;
+}
+
+
+// ✅ addProduct()
+function addProduct(){
+
+    let name = document.getElementById("name").value;
+    let price = document.getElementById("price").value;
+    let category = document.getElementById("category").value;
+    let stock = document.getElementById("stock").value;
+
+    if(name=="" || price=="" || stock==""){
+        alert("Fill all fields");
+        return;
+    }
+
+    let products = JSON.parse(localStorage.getItem("products")) || [];
+
+    products.push({
+        name: name,
+        price: price,
+        category: category,
+        quantity: Number(stock)
+    });
+
+    localStorage.setItem("products", JSON.stringify(products));
+
+    alert("Product Added Successfully");
+}
+
+
+// ✅ viewAllProducts()
+function viewAllProducts(){
+
+    let products = JSON.parse(localStorage.getItem("products")) || [];
+
+    if(products.length == 0){
+        document.getElementById("main").innerHTML = "No Products";
+        return;
+    }
+
+    let html = "<h2>Products</h2>";
+    html += "<table><tr><th>Name</th><th>Price</th><th>Stock</th></tr>";
+
+    for(let i=0;i<products.length;i++){
+        html += `<tr>
+            <td>${products[i].name}</td>
+            <td>${products[i].price}</td>
+            <td>${products[i].quantity}</td>
+        </tr>`;
+    }
+
+    html += "</table>";
+
+    document.getElementById("main").innerHTML = html;
+}
+
+
+// ✅ viewAllOrders()
+function viewAllOrders(){
+
+    let orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+    if(orders.length == 0){
+        document.getElementById("main").innerHTML = "No Orders";
+        return;
+    }
+
+    let html = "<h2>Orders</h2>";
+    html += "<table><tr><th>ID</th><th>Product</th><th>Status</th><th>Update</th></tr>";
+
+    for(let i=0;i<orders.length;i++){
+        html += `<tr>
+            <td>${i+1}</td>
+            <td>${orders[i].product}</td>
+            <td>${orders[i].status}</td>
+            <td>
+                <select onchange="updateOrderStatus(${i}, this.value)">
+                    <option ${orders[i].status=="Pending"?"selected":""}>Pending</option>
+                    <option ${orders[i].status=="Completed"?"selected":""}>Completed</option>
+                </select>
+            </td>
+        </tr>`;
+    }
+
+    html += "</table>";
+
+    document.getElementById("main").innerHTML = html;
+}
+
+
+// ✅ updateOrderStatus()
+function updateOrderStatus(index, status){
+
+    let orders = JSON.parse(localStorage.getItem("orders"));
+
+    orders[index].status = status;
+
+    localStorage.setItem("orders", JSON.stringify(orders));
+
+    alert("Status Updated");
+}
+
+
+// ✅ viewRequests()  ⭐ FIXED HERE
+function viewRequests(){
+
+    let requests = JSON.parse(localStorage.getItem("requests")) || [];
+
+    if(requests.length == 0){
+        document.getElementById("main").innerHTML = "No Requests";
+        return;
+    }
+
+    let html = "<h2>Customer Requests</h2>";
+    html += "<table><tr><th>Product</th><th>Request</th></tr>";
+
+    for(let i=0;i<requests.length;i++){
+        html += `<tr>
+            <td>${requests[i].product}</td>
+            <td>${requests[i].message}</td>
+        </tr>`;
+    }
+
+    html += "</table>";
+
+    
+
+    document.getElementById("main").innerHTML = html;
+}
+
+
+
+</script>
+
+</body>
+</html>

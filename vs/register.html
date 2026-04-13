@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Register</title>
+
+<style>
+body {
+    background-color: #7a8694;
+    font-family: Arial;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background-color: #303438;
+    padding: 30px;
+    border-radius: 10px;
+    width: 350px;
+    color: white;
+}
+h2 {
+    text-align: center;
+    color: #bcb6aa;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid #555;
+    background-color: #3c4a59;
+    color: white;
+}
+p {
+    text-align: center;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Create Account</h2>
+
+
+<label>Full Name</label>
+<input type="text" id="name" placeholder="Enter your full name">
+
+<label>Email ID</label>
+<input type="email" id="email" placeholder="Enter your email">
+
+<label>Phone Number</label>
+<input type="text" id="phone" placeholder="Enter your phone number">
+
+<label>Password</label>
+<input type="password" id="password" placeholder="Enter password">
+
+<label>Confirm Password</label>
+<input type="password" id="confirm" placeholder="Confirm password">
+
+<label>Role</label>
+<select id="role">
+    <option value="Customer">Customer</option>
+    <option value="Admin">Admin</option>
+</select>
+
+
+<button onclick="registerUser()" 
+style="width:100%; padding:10px; background-color:#fefefe; border:none; border-radius:5px;">
+Register
+</button>
+
+<p>
+<a href="login.html" style="color:#fef6f6;">Already have an account? Login</a>
+</p>
+
+</div>
+
+<script>
+function registerUser(){
+    let name = document.getElementById("name").value;
+    let email = document.getElementById("email").value;
+    let phone = document.getElementById("phone").value;
+    let password = document.getElementById("password").value;
+    let confirm = document.getElementById("confirm").value;
+    let role = document.getElementById("role").value;
+
+   
+    if(name=="" || email=="" || phone=="" || password=="" || confirm==""){
+        alert("All fields required");
+        return;
+    }
+
+    if(password != confirm){
+        alert("Password not match");
+        return;
+    }
+
+    if(isNaN(phone)){
+        alert("Phone number must be numeric");
+        return;
+    }
+
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+
+    users.push({name,email,phone,password,role});
+    localStorage.setItem("users", JSON.stringify(users));
+
+    alert("Registered Successfully");
+
+    window.location.href = "login.html";
+}
+</script>
+
+</body>
+</html>
