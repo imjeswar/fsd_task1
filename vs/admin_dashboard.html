@@ -53,8 +53,7 @@ table, th, td {
 </div>
 
 <script>
-
-// ✅ Add Product Form
+
 function showAdd(){
     document.getElementById("main").innerHTML = `
         <h2>Add Product</h2>
@@ -67,7 +66,6 @@ function showAdd(){
 }
 
 
-// ✅ addProduct()
 function addProduct(){
 
     let name = document.getElementById("name").value;
@@ -94,8 +92,7 @@ function addProduct(){
     alert("Product Added Successfully");
 }
 
-
-// ✅ viewAllProducts()
+
 function viewAllProducts(){
 
     let products = JSON.parse(localStorage.getItem("products")) || [];
@@ -122,7 +119,6 @@ function viewAllProducts(){
 }
 
 
-// ✅ viewAllOrders()
 function viewAllOrders(){
 
     let orders = JSON.parse(localStorage.getItem("orders")) || [];
@@ -154,8 +150,7 @@ function viewAllOrders(){
     document.getElementById("main").innerHTML = html;
 }
 
-
-// ✅ updateOrderStatus()
+
 function updateOrderStatus(index, status){
 
     let orders = JSON.parse(localStorage.getItem("orders"));
@@ -167,8 +162,7 @@ function updateOrderStatus(index, status){
     alert("Status Updated");
 }
 
-
-// ✅ viewRequests()  ⭐ FIXED HERE
+
 function viewRequests(){
 
     let requests = JSON.parse(localStorage.getItem("requests")) || [];
