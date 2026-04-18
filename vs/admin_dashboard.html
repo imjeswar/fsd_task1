@@ -53,64 +53,66 @@ table, th, td {
 </div>
 
 <script>
-
-function showAdd(){
-    document.getElementById("main").innerHTML = `
-        <h2>Add Product</h2>
-        <input id="name" placeholder="Product Name"><br>
-        <input id="price" type="number" placeholder="Price"><br>
-        <input id="category" placeholder="Category"><br>
-        <input id="stock" type="number" placeholder="Stock"><br>
-        <button onclick="addProduct()">Add Product</button>
-    `;
-}
 
+function showAdd(){
+
+    var html = "";
+    html += "<h2>Add Product</h2>";
+    html += "<input id='name' placeholder='Product Name'><br>";
+    html += "<input id='price' type='number' placeholder='Price'><br>";
+    html += "<input id='category' placeholder='Category'><br>";
+    html += "<input id='stock' type='number' placeholder='Stock'><br>";
+    html += "<button onclick='addProduct()'>Add Product</button>";
+
+    document.getElementById("main").innerHTML = html;
+}
 
 function addProduct(){
 
-    let name = document.getElementById("name").value;
-    let price = document.getElementById("price").value;
-    let category = document.getElementById("category").value;
-    let stock = document.getElementById("stock").value;
+    var name = document.getElementById("name").value;
+    var price = document.getElementById("price").value;
+    var category = document.getElementById("category").value;
+    var stock = document.getElementById("stock").value;
 
     if(name=="" || price=="" || stock==""){
         alert("Fill all fields");
         return;
     }
 
-    let products = JSON.parse(localStorage.getItem("products")) || [];
+    var products = JSON.parse(localStorage.getItem("products")) || [];
 
-    products.push({
+    var obj = {
         name: name,
         price: price,
         category: category,
         quantity: Number(stock)
-    });
+    };
+
+    products.push(obj);
 
     localStorage.setItem("products", JSON.stringify(products));
 
     alert("Product Added Successfully");
 }
 
-
 function viewAllProducts(){
 
-    let products = JSON.parse(localStorage.getItem("products")) || [];
+    var products = JSON.parse(localStorage.getItem("products")) || [];
 
     if(products.length == 0){
         document.getElementById("main").innerHTML = "No Products";
         return;
     }
 
-    let html = "<h2>Products</h2>";
+    var html = "<h2>Products</h2>";
     html += "<table><tr><th>Name</th><th>Price</th><th>Stock</th></tr>";
 
-    for(let i=0;i<products.length;i++){
-        html += `<tr>
-            <td>${products[i].name}</td>
-            <td>${products[i].price}</td>
-            <td>${products[i].quantity}</td>
-        </tr>`;
+    for(var i=0;i<products.length;i++){
+        html += "<tr>";
+        html += "<td>" + products[i].name + "</td>";
+        html += "<td>" + products[i].price + "</td>";
+        html += "<td>" + products[i].quantity + "</td>";
+        html += "</tr>";
     }
 
     html += "</table>";
@@ -118,31 +120,36 @@ function viewAllProducts(){
     document.getElementById("main").innerHTML = html;
 }
 
-
 function viewAllOrders(){
 
-    let orders = JSON.parse(localStorage.getItem("orders")) || [];
+    var orders = JSON.parse(localStorage.getItem("orders")) || [];
 
     if(orders.length == 0){
         document.getElementById("main").innerHTML = "No Orders";
         return;
     }
 
-    let html = "<h2>Orders</h2>";
+    var html = "<h2>Orders</h2>";
     html += "<table><tr><th>ID</th><th>Product</th><th>Status</th><th>Update</th></tr>";
 
-    for(let i=0;i<orders.length;i++){
-        html += `<tr>
-            <td>${i+1}</td>
-            <td>${orders[i].product}</td>
-            <td>${orders[i].status}</td>
-            <td>
-                <select onchange="updateOrderStatus(${i}, this.value)">
-                    <option ${orders[i].status=="Pending"?"selected":""}>Pending</option>
-                    <option ${orders[i].status=="Completed"?"selected":""}>Completed</option>
-                </select>
-            </td>
-        </tr>`;
+    for(var i=0;i<orders.length;i++){
+
+        html += "<tr>";
+        html += "<td>" + (i+1) + "</td>";
+        html += "<td>" + orders[i].product + "</td>";
+        html += "<td>" + orders[i].status + "</td>";
+
+        html += "<td>";
+        html += "<select onchange='updateOrderStatus(" + i + ", this.value)'>";
+
+        html += "<option>Pending</option>";
+        html += "<option>Completed</option>";
+        html += "<option>Cancelled</option>";
+
+        html += "</select>";
+        html += "</td>";
+
+        html += "</tr>";
     }
 
     html += "</table>";
@@ -150,10 +157,10 @@ function viewAllOrders(){
     document.getElementById("main").innerHTML = html;
 }
 
-
+
 function updateOrderStatus(index, status){
 
-    let orders = JSON.parse(localStorage.getItem("orders"));
+    var orders = JSON.parse(localStorage.getItem("orders"));
 
     orders[index].status = status;
 
@@ -162,34 +169,30 @@ function updateOrderStatus(index, status){
     alert("Status Updated");
 }
 
-
+
 function viewRequests(){
 
-    let requests = JSON.parse(localStorage.getItem("requests")) || [];
+    var requests = JSON.parse(localStorage.getItem("requests")) || [];
 
     if(requests.length == 0){
         document.getElementById("main").innerHTML = "No Requests";
         return;
     }
 
-    let html = "<h2>Customer Requests</h2>";
+    var html = "<h2>Customer Requests</h2>";
     html += "<table><tr><th>Product</th><th>Request</th></tr>";
 
-    for(let i=0;i<requests.length;i++){
-        html += `<tr>
-            <td>${requests[i].product}</td>
-            <td>${requests[i].message}</td>
-        </tr>`;
+    for(var i=0;i<requests.length;i++){
+        html += "<tr>";
+        html += "<td>" + requests[i].product + "</td>";
+        html += "<td>" + requests[i].message + "</td>";
+        html += "</tr>";
     }
 
     html += "</table>";
 
-    
-
     document.getElementById("main").innerHTML = html;
 }
-
-
 
 </script>
 
