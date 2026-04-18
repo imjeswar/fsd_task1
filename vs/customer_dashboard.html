@@ -4,23 +4,23 @@
 <title>Customer Dashboard</title>
 
 <style>
-body {
+body{
     background-color: #7a8592;
     font-family: Arial;
     text-align: center;
 }
-.container {
+.container{
     background-color: #303438;
     padding: 20px;
     width: 80%;
     margin: auto;
     color: white;
 }
-button {
+button{
     padding: 10px;
     margin: 5px;
 }
-table, th, td {
+table, th, td{
     border: 1px solid white;
     border-collapse: collapse;
     padding: 8px;
@@ -45,57 +45,55 @@ table, th, td {
 
 <script>
 
-let cart = [];
+var cart = [];
+
 
 function viewProducts(){
 
-    let products = JSON.parse(localStorage.getItem("products")) || [];
+    var products = JSON.parse(localStorage.getItem("products")) || [];
 
-    let html = "";
+    var html = "";
 
-    for(let i=0;i<products.length;i++){
+    for(var i=0; i<products.length; i++){
 
-        html += `
-        <div>
-            <h3>${products[i].name}</h3>
-            <p>Price: ${products[i].price}</p>
-            <p>Stock: ${products[i].quantity}</p>
+        html += "<div>";
+        html += "<h3>" + products[i].name + "</h3>";
+        html += "<p>Price: " + products[i].price + "</p>";
+        html += "<p>Stock: " + products[i].quantity + "</p>";
 
-            <button onclick="addToCart(${i})">Add to Cart</button>
+        html += "<button onclick='addToCart(" + i + ")'>Add to Cart</button>";
 
-            ${products[i].quantity==0 ? `
-            <p style="color:red;">Out of Stock</p>
-            <textarea id="req${i}" placeholder="Request to admin"></textarea>
-            <button onclick="sendRequest(${i})">Send</button>
-            ` : ""}
-        </div>
-        <hr>
-        `;
+        if(products[i].quantity == 0){
+            html += "<p style='color:red;'>Out of Stock</p>";
+            html += "<textarea id='req" + i + "' placeholder='Request'></textarea>";
+            html += "<button onclick='sendRequest(" + i + ")'>Send</button>";
+        }
+
+        html += "</div><hr>";
     }
 
     document.getElementById("main").innerHTML = html;
 }
 
-
 function addToCart(i){
 
-    let products = JSON.parse(localStorage.getItem("products"));
+    var products = JSON.parse(localStorage.getItem("products"));
 
     if(products[i].quantity > 0){
 
         cart.push(products[i]);
 
-        products[i].quantity--;
+        products[i].quantity = products[i].quantity - 1;
 
         localStorage.setItem("products", JSON.stringify(products));
 
-        document.getElementById("cartCount").innerText = cart.length;
+        document.getElementById("cartCount").innerHTML = cart.length;
 
-        alert("Added");
+        alert("Added to cart");
 
         viewProducts();
 
-    } else {
+    }else{
         alert("Out of Stock");
     }
 }
@@ -103,27 +101,36 @@ function addToCart(i){
 
 function showCart(){
 
-    let html = "<table><tr><th>Name</th><th>Price</th></tr>";
+    if(cart.length == 0){
+        document.getElementById("main").innerHTML = "Cart Empty";
+        return;
+    }
 
-    for(let i=0;i<cart.length;i++){
-        html += `<tr>
-            <td>${cart[i].name}</td>
-            <td>${cart[i].price}</td>
-        </tr>`;
+    var html = "<table><tr><th>Name</th><th>Price</th></tr>";
+
+    for(var i=0;i<cart.length;i++){
+        html += "<tr>";
+        html += "<td>" + cart[i].name + "</td>";
+        html += "<td>" + cart[i].price + "</td>";
+        html += "</tr>";
     }
 
     html += "</table>";
-    html += "<button onclick='placeOrder()'>Place Order</button>";
+    html += "<br><button onclick='placeOrder()'>Place Order</button>";
 
     document.getElementById("main").innerHTML = html;
 }
 
-
 function placeOrder(){
 
-    let orders = JSON.parse(localStorage.getItem("orders")) || [];
+    if(cart.length == 0){
+        alert("Cart empty");
+        return;
+    }
 
-    for(let i=0;i<cart.length;i++){
+    var orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+    for(var i=0;i<cart.length;i++){
         orders.push({
             product: cart[i].name,
             status: "Pending"
@@ -134,23 +141,27 @@ function placeOrder(){
 
     cart = [];
 
-    document.getElementById("cartCount").innerText = 0;
+    document.getElementById("cartCount").innerHTML = 0;
 
     alert("Order Placed");
 }
 
-
 function viewOrders(){
 
-    let orders = JSON.parse(localStorage.getItem("orders")) || [];
+    var orders = JSON.parse(localStorage.getItem("orders")) || [];
 
-    let html = "<table><tr><th>Product</th><th>Status</th></tr>";
+    if(orders.length == 0){
+        document.getElementById("main").innerHTML = "No Orders";
+        return;
+    }
 
-    for(let i=0;i<orders.length;i++){
-        html += `<tr>
-            <td>${orders[i].product}</td>
-            <td>${orders[i].status}</td>
-        </tr>`;
+    var html = "<table><tr><th>Product</th><th>Status</th></tr>";
+
+    for(var i=0;i<orders.length;i++){
+        html += "<tr>";
+        html += "<td>" + orders[i].product + "</td>";
+        html += "<td>" + orders[i].status + "</td>";
+        html += "</tr>";
     }
 
     html += "</table>";
@@ -158,18 +169,24 @@ function viewOrders(){
     document.getElementById("main").innerHTML = html;
 }
 
+function sendRequest(i){
 
-function sendRequest(index){
+    var products = JSON.parse(localStorage.getItem("products"));
+    var msg = document.getElementById("req"+i).value;
 
-    let products = JSON.parse(localStorage.getItem("products"));
-    let msg = document.getElementById("req"+index).value;
+    if(msg == ""){
+        alert("Enter request");
+        return;
+    }
 
-    let requests = JSON.parse(localStorage.getItem("requests")) || [];
+    var requests = JSON.parse(localStorage.getItem("requests")) || [];
 
-    requests.push({
-        product: products[index].name,
+    var obj = {
+        product: products[i].name,
         message: msg
-    });
+    };
+
+    requests.push(obj);
 
     localStorage.setItem("requests", JSON.stringify(requests));
 
